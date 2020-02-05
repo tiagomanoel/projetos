@@ -64,36 +64,48 @@ function ATUALIZAR()
 declare -f INSTMENU
 function INSTMENU()
 {
-	selection=$(zenity --list --checklist --width=300 --height=600  \
-	--title='Selecione' --column="#" --column=Softwares \
-	FALSE "Google-Chrome-Stable" \
-	FALSE "Insync" \
-	FALSE "Spotify-FlatHub" \
-	FALSE "Sublime-Text-FlatHub" \
-	FALSE "ubuntu-restricted-extras" \
-	FALSE "mpv" \
-	FALSE "celluloid" \
-	FALSE "audacious" \
-	FALSE "gnome-calendar" \
-	FALSE "gnome-maps" \
-	FALSE "gnome-contacts" \
-	FALSE "shutter" \
-	FALSE "flameshot" \
-	FALSE "snapd" \
-	FALSE "kdenlive" \
-	FALSE "ffmpeg" \
-	FALSE "mint-meta-codecs" \
-	FALSE "winff" \
-	FALSE "synaptic" \
-	FALSE "gparted" \
-	FALSE "geary" \
-	FALSE "steam-installer" )
-
+	selection=$(zenity --list --title='Selecione' --column="#" --column="Softwares" --column="Descrição" \
+	FALSE "Google-Chrome-Stable" "Navegador Web" \
+	FALSE "Insync" "Client Google Drive" \
+	FALSE "Spotify-FlatHub" "Music Streaming" \
+	FALSE "Telegram-FlatHub" "Messenger" \
+ 	FALSE "Sublime-Text-FlatHub" "IDE para desenvolvimento" \
+	FALSE "ubuntu-restricted-extras" "Adicionais (codec, flash e etc...)" \
+	FALSE "mpv" "Player de Vídeo" \
+	FALSE "celluloid" "Player de Vídeo" \
+	FALSE "audacious" "Player de Áudio" \
+	FALSE "gnome-calendar" "Calendário" \
+	FALSE "gnome-maps" "Mapas" \
+	FALSE "gnome-contacts" "Agenda de Contatos" \
+	FALSE "shutter" "Ferramenta para PrintScreen" \
+	FALSE "flameshot" "Ferramenta para PrintScreen" \
+	FALSE "snapd" "Core para containers SNAP" \
+	FALSE "kdenlive" "Editor de Vídeo" \
+	FALSE "ffmpeg" "Ferramenta Back-End para conversão de media" \
+	FALSE "winff" "Front-End para FFMPEG"\
+	FALSE "mint-meta-codecs" "Pacote de Codecs" \
+	FALSE "synaptic" "Gerenciador de pacotes" \
+	FALSE "gparted" "Gerenciador de partições" \
+	FALSE "geary" "Client E-Mail" \
+	FALSE "clipit" "Gerenciador de Clipboard" \
+	FALSE "virtualbox-qt" "Virtualização" \
+	FALSE "wine-stable" "Camada para Softwares Windows" \
+	FALSE "libreoffice" "Ferramentas de escritório" \
+	FALSE "Handbrake-FlatHub" "Ferramentas para conversão de Vídeo" \
+	FALSE "WPS-Office-FlatHub" "Ferramentas de escritório" \
+	FALSE "ONLYOFFICE-FlatHub" "Ferramentas de escritório" \
+	FALSE "transmission" "Client torrent" \
+	FALSE "keepassxc" "Gerenciador de senhas" \
+	FALSE "Descompactadores" "p7zip-full p7zip-rar lzma lzma-dev rar unrar-free p7zip ark ncompress" \
+	FALSE "steam-installer" "Game Store" \
+	FALSE "zsnes" "Emulador de SuperNes" \
+	--separator=" "	--checklist  --height=650 --width=550 )
+	
 	if [[ -z $selection  ]]; then
 		MENU
 	fi
 
-	echo "${selection//|/ }"
+	echo "$selection"
 	INSTPROGRAMA
 }
 
@@ -127,6 +139,14 @@ function INSTINSYNC()
     clear			
 }
 
+declare -f INSTLIBREOFFICE
+function INSTLIBREOFFICE()
+{
+	sudo add-apt-repository ppa:libreoffice/ppa -y
+	sudo apt update && sudo apt dist-upgrade -y
+	which libreoffice || sudo apt install libreoffice libreoffice-l10n-br -y
+}
+
 declare -f INSTPROGRAMA
 function INSTPROGRAMA()
 {
@@ -134,7 +154,7 @@ function INSTPROGRAMA()
 	echo "#========== Instalando $ESCOLHA ==========#"
 	sleep 2
 	clear
-	for ESCOLHA in ${selection//|/ }; do
+	for ESCOLHA in $selection; do
 		case $ESCOLHA in
 			Google-Chrome-Stable )
 				echo "#========== Instalando $ESCOLHA ==========#"
@@ -156,6 +176,35 @@ function INSTPROGRAMA()
 				sleep 2
 				flatpak install flathub com.sublimetext.three -y
 				;;
+			Handbrake-FlatHub )
+				echo "#========== Instalando $ESCOLHA ==========#"
+				sleep 2
+				flatpak install flathub fr.handbrake.ghb -y 
+				;;
+			WPS-Office-FlatHub )
+				echo "#========== Instalando $ESCOLHA ==========#"
+				sleep 2
+				flatpak install flathub com.wps.Office -y
+				;;
+			ONLYOFFICE-FlatHub )
+				echo "#========== Instalando $ESCOLHA ==========#"
+				sleep 2
+				flatpak install flathub org.onlyoffice.desktopeditors -y
+				;;	
+			libreoffice )
+				echo "#========== Instalando $ESCOLHA ==========#"
+				sleep 2
+				INSTLIBREOFFICE ;;
+			Telegram-FlatHub )
+				echo "#========== Instalando $ESCOLHA ==========#"
+				sleep 2
+				flatpak install flathub org.telegram.desktop -y
+				 ;;	
+			Descompactadores )
+				echo "#========== Instalando $ESCOLHA ==========#"
+				sleep 2
+				sudo apt install p7zip-full p7zip-rar lzma lzma-dev rar unrar-free p7zip ark ncompress -y 
+				;;	
 			* )
 				echo "#========== Instalando $ESCOLHA ==========#"
 				sleep 2
