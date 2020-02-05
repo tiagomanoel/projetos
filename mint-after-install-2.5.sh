@@ -16,27 +16,29 @@ ESCOLHA=Softwares
 declare -f MENU
 function MENU()
 {
-	clear
-	echo "=== MINT-AFTER-INSTALL-2.5 ==="
-	PS3="Escolha uma opção! "
-	select i in "Atualizar Repositórios e Sistema" "Instalar Softwares" sair
-	do
-	   case "$i" in
-	      "Atualizar Repositórios e Sistema" )
-	        ATUALIZAR
-		 	;;
-	      "Instalar Softwares" )
-	        INSTMENU
+	selection=$(zenity --list --title='Selecione' --column="#" --column="Softwares"  \
+	FALSE "Atualizar Repositórios e Sistema" \
+	FALSE "Instalar Softwares" \
+	FALSE "Desinstalar Embarcados" \
+	--radiolist  --height=200 --width=300 )
+	
+	if [[ -z $selection  ]]; then
+		exit 0
+	fi
+	case "$selection" in
+	   "Atualizar Repositórios e Sistema" )
+	    	ATUALIZAR
+			;;
+	   	"Instalar Softwares" )
+	    	INSTMENU
+	    	;;
+	   	"Desinstalar Embarcados" )
+			RMMENU
+			;;
+	    * )
+	        echo "opcao inválida, tente novamente!"
 	        ;;
-	      sair )
-	         echo "Encerrando..."
-	         break
-	         ;;
-	      * )
-	         echo "opcao inválida, tente novamente!"
-	         ;;
-	   esac
-	done
+	esac
 	exit 0
 }
 
@@ -60,7 +62,7 @@ function ATUALIZAR()
 	MENU
 }
 
-######Funções de Instalação######
+######Funções de Instalação e Remoção######
 declare -f INSTMENU
 function INSTMENU()
 {
@@ -105,38 +107,53 @@ function INSTMENU()
 		MENU
 	fi
 
-	echo "$selection"
 	INSTPROGRAMA
 }
+
+declare -f RMMENU
+function RMMENU()
+{
+	selection=$(zenity --list --title='Selecione' --column="#" --column="Softwares" --column="Descrição" \
+	FALSE "hexchat" "Chat" \
+	FALSE "firefox" "Navegador Web" \
+	FALSE "thunderbird" "Client E-Mail" \
+	FALSE "rhythmbox" "Player de Musíca" \
+	--separator=" "	--checklist  --height=650 --width=550 )
+	
+	if [[ -z $selection  ]]; then
+		MENU
+	fi
+
+	RMPROGRAMAS
+}
+
+declare -f RMPROGRAMAS
+ function RMPROGRAMAS()
+ {
+ 	for ESCOLHA in $selection; do
+ 		echo "#========== Removendo $ESCOLHA ==========#"
+		sleep 2
+ 		sudo apt remove $ESCOLHA -y
+ 	done
+ 	MENU
+ }
 
 declare -f INSTCHROME
 function INSTCHROME()
 {
-	clear
-	echo "#========== Instalando Google Chrome ==========#"
-	sleep 2
 	mkdir /tmp/chrome
 	cd /tmp/chrome
 	wget $GOOGLE_CHROME
 	sudo dpkg -i *.deb
-	echo "#========== Finalizado com sucesso! ==========#"
-	sleep 3
-    clear			
 }
 
 declare -f INSTINSYNC
 function INSTINSYNC()
 {
-	clear
-	echo "#========== Instalando Insync ==========#"
-	sleep 2
 	mkdir /tmp/insync
 	cd /tmp/insync
 	wget $INSYNC
 	sudo dpkg -i *.deb
-	echo "#========== Finalizado com sucesso! ==========#"
-	sleep 3
-    clear			
 }
 
 declare -f INSTLIBREOFFICE
@@ -155,59 +172,39 @@ function INSTPROGRAMA()
 	sleep 2
 	clear
 	for ESCOLHA in $selection; do
+		echo "#========== Instalando $ESCOLHA ==========#"
+		sleep 2
 		case $ESCOLHA in
 			Google-Chrome-Stable )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				INSTCHROME
 				;;
 			Insync )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				INSTINSYNC
 				;;
 			Spotify-FlatHub )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				flatpak install flathub com.spotify.Client -y
 				;;
 			Sublime-Text-FlatHub )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				flatpak install flathub com.sublimetext.three -y
 				;;
 			Handbrake-FlatHub )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				flatpak install flathub fr.handbrake.ghb -y 
 				;;
 			WPS-Office-FlatHub )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				flatpak install flathub com.wps.Office -y
 				;;
 			ONLYOFFICE-FlatHub )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				flatpak install flathub org.onlyoffice.desktopeditors -y
 				;;	
 			libreoffice )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				INSTLIBREOFFICE ;;
 			Telegram-FlatHub )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				flatpak install flathub org.telegram.desktop -y
 				 ;;	
 			Descompactadores )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				sudo apt install p7zip-full p7zip-rar lzma lzma-dev rar unrar-free p7zip ark ncompress -y 
 				;;	
 			* )
-				echo "#========== Instalando $ESCOLHA ==========#"
-				sleep 2
 				apt install $ESCOLHA -y 
 				;;	
 		esac		
