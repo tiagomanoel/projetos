@@ -3,7 +3,7 @@
 ##########SCRIPT DE PÓS INSTALAÇÃO DO LINUX MINT 19.03#########
 #Escrito por Tiago G. Manoel
 #Release - 2.5
-#Data - 05/02/2020
+#Data - 15/02/2020
 
 
 
@@ -71,6 +71,7 @@ function INSTMENU()
 	FALSE "Insync" "Client Google Drive" \
 	FALSE "Spotify-FlatHub" "Music Streaming" \
 	FALSE "Telegram-FlatHub" "Messenger" \
+	FALSE "whatsapp-desktop" "Messenger" \
  	FALSE "Sublime-Text-FlatHub" "IDE para desenvolvimento" \
 	FALSE "ubuntu-restricted-extras" "Adicionais (codec, flash e etc...)" \
 	FALSE "mpv" "Player de Vídeo" \
@@ -101,6 +102,7 @@ function INSTMENU()
 	FALSE "Descompactadores" "p7zip-full p7zip-rar lzma lzma-dev rar unrar-free p7zip ark ncompress" \
 	FALSE "steam-installer" "Game Store" \
 	FALSE "zsnes" "Emulador de SuperNes" \
+	FALSE "ttf-mscorefonts-installer" "Fontes Microsoft" \
 	--separator=" "	--checklist  --height=650 --width=550 )
 	
 	if [[ -z $selection  ]]; then
