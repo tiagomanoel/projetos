@@ -1,182 +1,68 @@
 #!/bin/bash
 
-##########SCRIPT DE PÓS INSTALAÇÃO DO LINUX MINT 19.03#########
-#Escrito por Tiago G. Manoel
-#Release - 2.5
-#Data - 15/02/2020
+########## POST SCRIPT INSTALLATION OF LINUX MINT 19.03 #########
+# Written by Tiago G. Manoel
+# Release - 2.5
+# Date - 25/02/2020
 
 
 
-#---VARIÁVEIS---#
-INSYNC=https://d2t3ff60b2tol4.cloudfront.net/builds/insync_3.0.27.40677-bionic_amd64.deb
-GOOGLE_CHROME=https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-ESCOLHA=Softwares
+#---VARIABLES---#
+CHOICE=Softwares
 
-######Função Menu Principal######
-declare -f MENU
-function MENU()
+#---IDENTIFY DISTRIBUTION---#
+declare -f VERIFY_DISTRIB
+function VERIFY_DISTRIB()
 {
-	selection=$(zenity --list --title='Selecione' --column="#" --column="Softwares"  \
-	FALSE "Atualizar Repositórios e Sistema" \
-	FALSE "Instalar Softwares" \
-	FALSE "Desinstalar Embarcados" \
-	--radiolist  --height=200 --width=300 )
-	
-	if [[ -z $selection  ]]; then
-		exit 0
+	ID=`lsb_release -i`
+	RELEASE=`lsb_release -r`
+	if [[ $ID = "Distributor ID:	Ubuntu" && $RELEASE = "Release:	19.10" ]]; then
+		clear
+		lsb_release -a
+		MENU_UBUNTU
+	elif [[ $ID = "Distributor ID:	LinuxMint" && $RELEASE = "Release:	19.3" ]]; then
+		clear
+		lsb_release -a
+		MENU_MINT
+	else	
+		echo "#========== Unsupported Distribution ==========#"
+		sleep 3
+
 	fi
-	case "$selection" in
-	   "Atualizar Repositórios e Sistema" )
-	    	ATUALIZAR
-			;;
-	   	"Instalar Softwares" )
-	    	INSTMENU
-	    	;;
-	   	"Desinstalar Embarcados" )
-			RMMENU
-			;;
-	    * )
-	        echo "opcao inválida, tente novamente!"
-	        ;;
-	esac
-	exit 0
 }
 
-######Função de Atualização do Sistema######
-declare -f ATUALIZAR
-function ATUALIZAR()
+#---System Update Function ---#
+declare -f UPDATE
+function UPDATE()
 {
 	clear
-	echo "=== Atualizando Repositórios ==="
+	echo "=== Updating Repositories ==="
 	sleep 2
 	sudo rm /var/lib/dpkg/lock-frontend
 	sudo rm /var/cache/apt/archives/lock
 	sudo apt update -y
 	clear
-	echo "=== Aplicadando Atulizações ==="
+	echo "=== Applying Updates ==="
 	sleep 2
 	sudo apt dist-upgrade -y
 	clear
-	echo "=== Terminado ==="
+	echo "=== Finished ==="
 	sleep 3
-	MENU
+	VERIFY_DISTRIB
 }
 
-######Funções de Instalação e Remoção######
-declare -f INSTMENU
-function INSTMENU()
-{
-	selection=$(zenity --list --title='Selecione' --column="#" --column="Softwares" --column="Descrição" \
-	FALSE "Google-Chrome-Stable" "Navegador Web" \
-	FALSE "Insync" "Client Google Drive" \
-	FALSE "Spotify-FlatHub" "Music Streaming" \
-	FALSE "Telegram-FlatHub" "Messenger" \
-	FALSE "whatsapp-desktop" "Messenger" \
- 	FALSE "Sublime-Text-FlatHub" "IDE para desenvolvimento" \
-	FALSE "ubuntu-restricted-extras" "Adicionais (codec, flash e etc...)" \
-	FALSE "mpv" "Player de Vídeo" \
-	FALSE "celluloid" "Player de Vídeo" \
-	FALSE "audacious" "Player de Áudio" \
-	FALSE "gnome-calendar" "Calendário" \
-	FALSE "gnome-maps" "Mapas" \
-	FALSE "gnome-contacts" "Agenda de Contatos" \
-	FALSE "shutter" "Ferramenta para PrintScreen" \
-	FALSE "flameshot" "Ferramenta para PrintScreen" \
-	FALSE "snapd" "Core para containers SNAP" \
-	FALSE "kdenlive" "Editor de Vídeo" \
-	FALSE "ffmpeg" "Ferramenta Back-End para conversão de media" \
-	FALSE "winff" "Front-End para FFMPEG"\
-	FALSE "mint-meta-codecs" "Pacote de Codecs" \
-	FALSE "synaptic" "Gerenciador de pacotes" \
-	FALSE "gparted" "Gerenciador de partições" \
-	FALSE "geary" "Client E-Mail" \
-	FALSE "clipit" "Gerenciador de Clipboard" \
-	FALSE "virtualbox-qt" "Virtualização" \
-	FALSE "wine-stable" "Camada para Softwares Windows" \
-	FALSE "libreoffice" "Ferramentas de escritório" \
-	FALSE "Handbrake-FlatHub" "Ferramentas para conversão de Vídeo" \
-	FALSE "WPS-Office-FlatHub" "Ferramentas de escritório" \
-	FALSE "ONLYOFFICE-FlatHub" "Ferramentas de escritório" \
-	FALSE "transmission" "Client torrent" \
-	FALSE "keepassxc" "Gerenciador de senhas" \
-	FALSE "Descompactadores" "p7zip-full p7zip-rar lzma lzma-dev rar unrar-free p7zip ark ncompress" \
-	FALSE "steam-installer" "Game Store" \
-	FALSE "zsnes" "Emulador de SuperNes" \
-	FALSE "ttf-mscorefonts-installer" "Fontes Microsoft" \
-	--separator=" "	--checklist  --height=650 --width=550 )
-	
-	if [[ -z $selection  ]]; then
-		MENU
-	fi
-
-	INSTPROGRAMA
-}
-
-declare -f RMMENU
-function RMMENU()
-{
-	selection=$(zenity --list --title='Selecione' --column="#" --column="Softwares" --column="Descrição" \
-	FALSE "hexchat" "Chat" \
-	FALSE "firefox" "Navegador Web" \
-	FALSE "thunderbird" "Client E-Mail" \
-	FALSE "rhythmbox" "Player de Musíca" \
-	--separator=" "	--checklist  --height=650 --width=550 )
-	
-	if [[ -z $selection  ]]; then
-		MENU
-	fi
-
-	RMPROGRAMAS
-}
-
-declare -f RMPROGRAMAS
- function RMPROGRAMAS()
- {
- 	for ESCOLHA in $selection; do
- 		echo "#========== Removendo $ESCOLHA ==========#"
-		sleep 2
- 		sudo apt remove $ESCOLHA -y
- 	done
- 	MENU
- }
-
-declare -f INSTCHROME
-function INSTCHROME()
-{
-	mkdir /tmp/chrome
-	cd /tmp/chrome
-	wget $GOOGLE_CHROME
-	sudo dpkg -i *.deb
-}
-
-declare -f INSTINSYNC
-function INSTINSYNC()
-{
-	mkdir /tmp/insync
-	cd /tmp/insync
-	wget $INSYNC
-	sudo dpkg -i *.deb
-}
-
-declare -f INSTLIBREOFFICE
-function INSTLIBREOFFICE()
-{
-	sudo add-apt-repository ppa:libreoffice/ppa -y
-	sudo apt update && sudo apt dist-upgrade -y
-	which libreoffice || sudo apt install libreoffice libreoffice-l10n-br -y
-}
-
-declare -f INSTPROGRAMA
-function INSTPROGRAMA()
+#--- Functions ---#
+declare -f INSTSOFTWARE
+function INSTSOFTWARE()
 {
 	clear
-	echo "#========== Instalando $ESCOLHA ==========#"
+	echo "#========== Installing $CHOICE ==========#"
 	sleep 2
 	clear
-	for ESCOLHA in $selection; do
-		echo "#========== Instalando $ESCOLHA ==========#"
+	for CHOICE in $selection; do
+		echo "#========== Installing $CHOICE ==========#"
 		sleep 2
-		case $ESCOLHA in
+		case $CHOICE in
 			Google-Chrome-Stable )
 				INSTCHROME
 				;;
@@ -199,23 +85,265 @@ function INSTPROGRAMA()
 				flatpak install flathub org.onlyoffice.desktopeditors -y
 				;;	
 			libreoffice )
-				INSTLIBREOFFICE ;;
+				INSTLIBREOFFICE
+				;;
 			Telegram-FlatHub )
 				flatpak install flathub org.telegram.desktop -y
-				 ;;	
-			Descompactadores )
+				;;
+			Tor-Browser-Launcher-FlatHub )
+				flatpak install flathub com.github.micahflee.torbrowser-launcher -y
+				;;	
+			Whatsapp-desktop-Snap )
+				sudo snap install whatsdesk
+				;;
+			Vlc )
+				sudo snap install vlc
+				;;			
+			Unpackers )	
 				sudo apt install p7zip-full p7zip-rar lzma lzma-dev rar unrar-free p7zip ark ncompress -y 
 				;;	
 			* )
-				apt install $ESCOLHA -y 
+				apt install $CHOICE -y 
 				;;	
 		esac		
 	done 
-	echo "#========== Finalizado com sucesso! ==========#"
+	echo "#========== Successfully finished! ==========#"
 	sleep 3
     clear
-    MENU			
+    VERIFY_DISTRIB			
 }
 
-#==========EXECUÇÂO==========#
-MENU
+declare -f INSTCHROME
+function INSTCHROME()
+{
+	mkdir /tmp/chrome
+	cd /tmp/chrome
+	wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+	sudo dpkg -i *.deb
+}
+
+declare -f INSTINSYNC
+function INSTINSYNC()
+{
+	mkdir /tmp/insync
+	cd /tmp/insync
+	wget https://d2t3ff60b2tol4.cloudfront.net/builds/insync_3.0.27.40677-bionic_amd64.deb
+	sudo dpkg -i *.deb
+	which nautilus && sudo apt install insync-nautilus -y
+	which nemo && sudo apt install insync-nemo -y
+}
+
+declare -f INSTLIBREOFFICE
+function INSTLIBREOFFICE()
+{
+	sudo add-apt-repository ppa:libreoffice/ppa -y
+	sudo apt update && sudo apt dist-upgrade -y
+	which libreoffice || sudo apt install libreoffice libreoffice-l10n-br -y
+}
+
+#--- Unistall Softwares ---#
+declare -f RMSOFTWARES
+function RMSOFTWARES()
+{
+ 	for CHOICE in $selection; do
+ 		echo "#========== Removing $CHOICE ==========#"
+		sleep 2
+ 		sudo apt remove $CHOICE -y
+ 	done
+ 	VERIFY_DISTRIB
+}
+
+######========== LinuxMint ==========######
+
+###### Main Menu Function ######
+declare -f MENU_MINT
+function MENU_MINT()
+{
+	selection=$(zenity --list --title='Selection' --column="#" --column="Softwares" \
+	FALSE "Update Repositories and System" \
+	FALSE "Install Softwares" \
+	FALSE "Uninstall Embedded" \
+	--radiolist  --height=200 --width=300 )
+	
+	if [[ -z $selection  ]]; then
+		exit 0
+	fi
+	case "$selection" in
+	    "Update Repositories and System" )
+	    	UPDATE
+	    	;;  	
+	    "Install Softwares" )
+	    	INSTMENU_MINT
+	    	;;
+	   	"Uninstall Embedded" )
+			RMMENU_MINT
+			;;
+	    * )
+	        echo "invalid option, try again!"
+	        ;;
+	esac
+	exit 0
+}
+
+declare -f INSTMENU_MINT
+function INSTMENU_MINT()
+{
+	selection=$(zenity --list --title='Select' --column="#" --column="Softwares" --column="description" \
+	FALSE "Google-Chrome-Stable" "Web browser" \
+	FALSE "Tor-Browser-Launcher-FlatHub" "Private Web Browser" \
+	FALSE "Insync" "Client Google Drive" \
+	FALSE "Spotify-FlatHub" "Music Streaming" \
+	FALSE "Telegram-FlatHub" "Messenger" \
+	FALSE "whatsapp-desktop" "Messenger" \
+ 	FALSE "Sublime-Text-FlatHub" "IDE for development" \
+	FALSE "ubuntu-restricted-extras" "Additional (codec, flash and etc...)" \
+	FALSE "mpv" "Video Player" \
+	FALSE "celluloid" "Video Player" \
+	FALSE "audacious" "Audio Player" \
+	FALSE "gnome-calendar" "Calendar" \
+	FALSE "gnome-maps" "Maps" \
+	FALSE "gnome-contacts" "Contacts" \
+	FALSE "shutter" "PrintScreen Tool" \
+	FALSE "flameshot" "PrintScreen Tool" \
+	FALSE "snapd" "core for SNAP containers" \
+	FALSE "kdenlive" "Video editor" \
+	FALSE "ffmpeg" "Back-End Tool for Media Conversion" \
+	FALSE "winff" "Front-End for FFMPEG"\
+	FALSE "mint-meta-codecs" "Codec Pack" \
+	FALSE "synaptic" "Package Manager" \
+	FALSE "gparted" "Partition Manager" \
+	FALSE "geary" "EMAIL CLIENT" \
+	FALSE "clipit" "Clipboard Manager" \
+	FALSE "virtualbox-qt" "Virtualization" \
+	FALSE "wine-stable" "Layer for Windows Software" \
+	FALSE "libreoffice" "Office Tools" \
+	FALSE "WPS-Office-FlatHub" "Office Tools" \
+	FALSE "ONLYOFFICE-FlatHub" "Office Tools" \
+	FALSE "Handbrake-FlatHub" "Video conversion tools" \
+	FALSE "transmission" "Torrent client" \
+	FALSE "keepassxc" "Password Manager" \
+	FALSE "Unpackers" "zip-rar lzma lzma-dev rar unrar-free p7zip ark ncompress" \
+	FALSE "steam-installer" "Game Store" \
+	FALSE "zsnes" "SuperNes emulator" \
+	FALSE "ttf-mscorefonts-installer" "Microsoft fonts" \
+	--separator=" "	--checklist  --height=650 --width=650 )
+	
+	if [[ -z $selection  ]]; then
+		MENU_MINT
+	fi
+	INSTSOFTWARE
+}
+
+declare -f RMMENU_MINT
+function RMMENU_MINT()
+{
+	selection=$(zenity --list --title='Select' --column="#" --column="Softwares" --column="description" \
+	FALSE "hexchat" "Chat" \
+	FALSE "firefox" "Web browser" \
+	FALSE "thunderbird" "EMAIL CLIENT" \
+	FALSE "rhythmbox" "Audio Player" \
+	--separator=" "	--checklist  --height=650 --width=550 )
+	
+	if [[ -z $selection  ]]; then
+		MENU_MINT
+	fi
+	RMSOFTWARES
+}
+
+######========== Ubuntu ==========######
+###### Main Menu Function ######
+declare -f MENU_UBUNTU
+function MENU_UBUNTU()
+{
+	selection=$(zenity --list --title='Selection' --column="#" --column="Softwares" \
+	FALSE "Update Repositories and System" \
+	FALSE "Install Softwares" \
+	FALSE "Uninstall Embedded" \
+	--radiolist  --height=200 --width=300 )
+	
+	if [[ -z $selection  ]]; then
+		exit 0
+	fi
+	case "$selection" in
+	    "Update Repositories and System" )
+	    	UPDATE
+	    	;;  	
+	    "Install Softwares" )
+	    	INSTMENU_UBUNTU
+	    	;;
+	   	"Uninstall Embedded" )
+			RMMENU_UBUNTU
+			;;
+	    * )
+	        echo "invalid option, try again!"
+	        ;;
+	esac
+	exit 0
+}
+
+declare -f INSTMENU_UBUNTU
+function INSTMENU_UBUNTU()
+{
+	selection=$(zenity --list --title='Select' --column="#" --column="Softwares" --column="description" \
+	FALSE "Google-Chrome-Stable" "Web browser" \
+	FALSE "Tor-Browser-Launcher-FlatHub" "Private Web Browser" \
+	FALSE "Insync" "Client Google Drive" \
+	FALSE "Spotify-FlatHub" "Music Streaming" \
+	FALSE "Telegram-FlatHub" "Messenger" \
+	FALSE "Whatsapp-desktop-Snap" "Messenger" \
+	FALSE "Sublime-Text-FlatHub" "IDE for development" \
+	FALSE "ubuntu-restricted-extras" "Additional (codec, flash and etc...)" \
+	FALSE "mpv" "Video Player" \
+	FALSE "celluloid" "Video Player" \
+	FALSE "audacious" "Audio Player" \
+	FALSE "Vlc" "Audio Player" \
+	FALSE "gnome-calendar" "Calendar" \
+	FALSE "gnome-maps" "Maps" \
+	FALSE "gnome-contacts" "Contacts" \
+	FALSE "shutter" "PrintScreen Tool" \
+	FALSE "flameshot" "PrintScreen Tool" \
+	FALSE "kdenlive" "Video editor" \
+	FALSE "ffmpeg" "Back-End Tool for Media Conversion" \
+	FALSE "winff" "Front-End for FFMPEG"\
+	FALSE "synaptic" "Package Manager" \
+	FALSE "gparted" "Partition Manager" \
+	FALSE "geary" "EMAIL CLIENT" \
+	FALSE "virtualbox-qt" "Virtualization" \
+	FALSE "wine-stable" "Layer for Windows Software" \
+	FALSE "libreoffice" "Office Tools" \
+	FALSE "WPS-Office-FlatHub" "Office Tools" \
+	FALSE "ONLYOFFICE-FlatHub" "Office Tools" \
+	FALSE "Handbrake-FlatHub" "Video conversion tools" \
+	FALSE "transmission" "Torrent client" \
+	FALSE "keepassxc" "Password Manager" \
+	FALSE "Unpackers" "zip-rar lzma lzma-dev rar unrar-free p7zip ark ncompress" \
+	FALSE "steam-installer" "Game Store" \
+	FALSE "zsnes" "SuperNes emulator" \
+	FALSE "ttf-mscorefonts-installer" "Microsoft fonts" \
+	--separator=" "	--checklist  --height=650 --width=650 )
+	
+	if [[ -z $selection  ]]; then
+		MENU_UBUNTU
+	fi
+	which flatpak || sudo apt install flatpak gnome-software-plugin-flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	sudo sed -i.bak "/^# deb .*partner/ s/^# //" /etc/apt/sources.list && sudo apt update	
+	INSTSOFTWARE
+}
+
+declare -f RMMENU_UBUNTU
+function RMMENU_UBUNTU()
+{
+	selection=$(zenity --list --title='Select' --column="#" --column="Softwares" --column="description" \
+	FALSE "firefox" "Web browser" \
+	FALSE "thunderbird" "EMAIL CLIENT" \
+	FALSE "rhythmbox" "Audio Player" \
+	--separator=" "	--checklist  --height=650 --width=550 )
+	
+	if [[ -z $selection  ]]; then
+		MENU_UBUNTU
+	fi
+	RMSOFTWARES
+}
+
+#========== EXECUTION ==========#
+VERIFY_DISTRIB
