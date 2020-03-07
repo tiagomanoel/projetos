@@ -92,7 +92,10 @@ function INSTSOFTWARE()
 				;;
 			Tor-Browser-Launcher-FlatHub )
 				flatpak install flathub com.github.micahflee.torbrowser-launcher -y
-				;;	
+				;;
+			Jdownloader-FlatHub )
+				flatpak install flathub org.jdownloader.JDownloader -y
+				;;		
 			Whatsapp-desktop-Snap )
 				sudo snap install whatsdesk
 				;;
@@ -194,6 +197,7 @@ function INSTMENU_MINT()
 	FALSE "Insync" "Client Google Drive" \
 	FALSE "Spotify-FlatHub" "Music Streaming" \
 	FALSE "Telegram-FlatHub" "Messenger" \
+	FALSE "Jdownloader-FlatHub" "Downloader Manager" \
 	FALSE "whatsapp-desktop" "Messenger" \
  	FALSE "Sublime-Text-FlatHub" "IDE for development" \
 	FALSE "ubuntu-restricted-extras" "Additional (codec, flash and etc...)" \
@@ -290,6 +294,7 @@ function INSTMENU_UBUNTU()
 	FALSE "Insync" "Client Google Drive" \
 	FALSE "Spotify-FlatHub" "Music Streaming" \
 	FALSE "Telegram-FlatHub" "Messenger" \
+	FALSE "Jdownloader-FlatHub" "Downloader Manager" \
 	FALSE "Whatsapp-desktop-Snap" "Messenger" \
 	FALSE "Sublime-Text-FlatHub" "IDE for development" \
 	FALSE "ubuntu-restricted-extras" "Additional (codec, flash and etc...)" \
