@@ -1,14 +1,28 @@
 #!/bin/bash
 
-########## POST SCRIPT INSTALLATION OF LINUX MINT 19.03 #########
+########## POST SCRIPT INSTALLATION OF LINUX MINT 19.03 and Ubuntu 20.04 #########
 # Written by Tiago G. Manoel
-# Release - 2.5
-# Date - 25/02/2020
+# Release - 3.0
+# Date - 14/04/2020
 
 
 
 #---VARIABLES---#
 CHOICE=Softwares
+
+# make sure this is run as root
+declare -f VERIFY_ROOT
+function VERIFY_ROOT()
+{
+	uid=$(id -ur)
+	if [ "$uid" != "0" ]; then
+	        echo "ERROR: This script must be run as root."
+		if [ -x /usr/bin/sudo ]; then
+			echo "try: sudo $0"
+		fi
+	        exit 1
+	fi
+}
 
 #---IDENTIFY DISTRIBUTION---#
 declare -f VERIFY_DISTRIB
@@ -16,7 +30,7 @@ function VERIFY_DISTRIB()
 {
 	ID=`lsb_release -i`
 	RELEASE=`lsb_release -r`
-	if [[ $ID = "Distributor ID:	Ubuntu" && $RELEASE = "Release:	19.10" ]]; then
+	if [[ $ID = "Distributor ID:	Ubuntu" && $RELEASE = "Release:	20.04" ]]; then
 		clear
 		lsb_release -a
 		MENU_UBUNTU
@@ -83,6 +97,9 @@ function INSTSOFTWARE()
 				;;
 			ONLYOFFICE-FlatHub )
 				flatpak install flathub org.onlyoffice.desktopeditors -y
+				;;	
+			Discord-FlatHub )
+				flatpak install flathub com.discordapp.Discord -y
 				;;	
 			libreoffice )
 				INSTLIBREOFFICE
@@ -197,6 +214,7 @@ function INSTMENU_MINT()
 	FALSE "Insync" "Client Google Drive" \
 	FALSE "Spotify-FlatHub" "Music Streaming" \
 	FALSE "Telegram-FlatHub" "Messenger" \
+	FALSE "Discord-FlatHub" "Voice Messenger" \
 	FALSE "Jdownloader-FlatHub" "Downloader Manager" \
 	FALSE "whatsapp-desktop" "Messenger" \
  	FALSE "Sublime-Text-FlatHub" "IDE for development" \
@@ -207,6 +225,7 @@ function INSTMENU_MINT()
 	FALSE "gnome-calendar" "Calendar" \
 	FALSE "gnome-maps" "Maps" \
 	FALSE "gnome-contacts" "Contacts" \
+	FALSE "gnome-weather" "Weather" \
 	FALSE "shutter" "PrintScreen Tool" \
 	FALSE "flameshot" "PrintScreen Tool" \
 	FALSE "snapd" "core for SNAP containers" \
@@ -294,6 +313,7 @@ function INSTMENU_UBUNTU()
 	FALSE "Insync" "Client Google Drive" \
 	FALSE "Spotify-FlatHub" "Music Streaming" \
 	FALSE "Telegram-FlatHub" "Messenger" \
+	FALSE "Discord-FlatHub" "Voice Messenger" \
 	FALSE "Jdownloader-FlatHub" "Downloader Manager" \
 	FALSE "Whatsapp-desktop-Snap" "Messenger" \
 	FALSE "Sublime-Text-FlatHub" "IDE for development" \
@@ -305,6 +325,7 @@ function INSTMENU_UBUNTU()
 	FALSE "gnome-calendar" "Calendar" \
 	FALSE "gnome-maps" "Maps" \
 	FALSE "gnome-contacts" "Contacts" \
+	FALSE "gnome-weather" "Weather" \
 	FALSE "shutter" "PrintScreen Tool" \
 	FALSE "flameshot" "PrintScreen Tool" \
 	FALSE "kdenlive" "Video editor" \
@@ -325,6 +346,7 @@ function INSTMENU_UBUNTU()
 	FALSE "steam-installer" "Game Store" \
 	FALSE "zsnes" "SuperNes emulator" \
 	FALSE "ttf-mscorefonts-installer" "Microsoft fonts" \
+	FALSE "gnome-tweaks" "Gnome extra settings" \
 	--separator=" "	--checklist  --height=650 --width=650 )
 	
 	if [[ -z $selection  ]]; then
@@ -342,6 +364,7 @@ function RMMENU_UBUNTU()
 	FALSE "firefox" "Web browser" \
 	FALSE "thunderbird" "EMAIL CLIENT" \
 	FALSE "rhythmbox" "Audio Player" \
+	FALSE "remmina" "remote connection" \
 	--separator=" "	--checklist  --height=650 --width=550 )
 	
 	if [[ -z $selection  ]]; then
@@ -351,4 +374,5 @@ function RMMENU_UBUNTU()
 }
 
 #========== EXECUTION ==========#
+VERIFY_ROOT
 VERIFY_DISTRIB
